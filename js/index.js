@@ -11,41 +11,82 @@ fetch(url).then((response) =>
         }
         //console.log(tab);
         var api = "https://hubeau.eaufrance.fr/api/v1/temperature/chronique?code_station=";
-        var sortElemnt = "&size=1&sort=desc&pretty";
+        var sortElemnt = "&size=10&sort=desc&pretty";
         for (let i = 0; i < tab.length; i++) {
             var url_ = api + tab[i] + sortElemnt;
             fetch(url_).then((response) => 
             response.json().then((data) =>{ 
             var detail =  data.data;
-            console.log(detail);
+            var main = document.querySelector(".main");
+            var element_ = new Array();
+            var date_ = new Array();
+            if (i==0) {
+                var titre = document.createElement("div");
+                titre.className = "titre";
+                var cours_eau = document.createElement("h3");
+                cours_eau.innerHTML= "cours d'eau";
+                cours_eau.className = "contenu";
+                var temperature = document.createElement("h3");
+                temperature.innerHTML= "température";
+                temperature.className = "contenu";
+                var date = document.createElement("h3");
+                date.innerHTML= "date";
+                date.className = "contenu";
+                titre.appendChild(cours_eau);
+                titre.appendChild(temperature);
+                titre.appendChild(date);
+                main.appendChild(titre);
+            }
+            var infos = document.createElement("div");
+            infos.className = "infos";
+            var commune = document.createElement("p");
+            commune.innerHTML= detail[0]["libelle_commune"];
+            commune.className = "contenu";
+            var tps = document.createElement("p");
+            tps.innerHTML= Math.round(detail[0]["resultat"]) + " " + detail[0]["symbole_unite"];
+            tps.className = "contenu";
+            var date_info = document.createElement("p");
+            date_info.innerHTML= detail[0]["date_mesure_temp"];
+            date_info.className = "contenu";
+            infos.appendChild(commune);
+            infos.appendChild(tps);
+            infos.appendChild(date_info);
+            main.appendChild(infos);
+            //console.log(detail);
+            for (let j = 0; j < detail.length; j++) {
+                element_.push(detail[j]["resultat"]); 
+                date_.push(detail[j]["heure_mesure_temp"]);  
+                console.log(detail[j]["heure_mesure_temp"]); 
+                                       
+            }
+            var graph = document.querySelector('.graph');
+            var canva = document.createElement("CANVAS");
+            canva.className = "canva";
+            graph.appendChild(canva);
+            var ctx = canva;
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: date_,
+                    datasets: [{
+                    label: "# Température ",
+                    data: element_,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: false,
+                }
+                });
+            console.log(element_);
         })
     );
-        }
-        
-        //recuperer les données et les inserées dans des variables
-
-        //image
-        /*let picture = data.results[0]['picture']['large'];
-        //prenom et nom
-        let first = data.results[0]['name']['first'];
-        let last = data.results[0]['name']['last'];
-        //email
-        let email = data.results[0]['email'];
-        //date de naissance
-        let birthday_date = data.results[0]['dob']['date'];
-        birthday_date.split(" ", 5);
-        let birthday = birthday_date;
-        //adresse
-        let address_number = data.results[0]['location']['street']['number'];
-        let address_name = data.results[0]['location']['street']['name'];
-        //numero de télephone
-        let phone_number = data.results[0]['phone'];
-        //mot de passe
-        let password = data.results[0]['login']['password'];
-        
-        //inserer variables image
-        let user_image = document.getElementById("user-image");
-        user_image.src = picture;*/
-        
+        }       
     })
 );
