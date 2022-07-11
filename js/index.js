@@ -1,17 +1,22 @@
-//recuperation des donnees de l api avec la methode fetch
+//recuperation des donnees via api avec la methode fetch
+
+//recuperation des données du département de gironde
 let url = "https://hubeau.eaufrance.fr/api/v1/temperature/station?code_departement=33&size=20&exact_count=true&format=json&pretty";
 fetch(url).then((response) => 
     response.json().then((data) =>{ 
-        
         var tab = new Array(); 
         var datas =  data.data;
+
+        //recuperer les codes stations et les ajoutés dans un tableau
         for (let i = 0; i < datas.length; i++) {
             const station = datas[i]['code_station'];
             tab.push(station); 
         }
-        //console.log(tab);
+
+        //récuperation des 10 dernières information des stations
         var api = "https://hubeau.eaufrance.fr/api/v1/temperature/chronique?code_station=";
         var sortElemnt = "&size=10&sort=desc&pretty";
+
         for (let i = 0; i < tab.length; i++) {
             var url_ = api + tab[i] + sortElemnt;
             fetch(url_).then((response) => 
@@ -20,6 +25,8 @@ fetch(url).then((response) =>
             var main = document.querySelector(".main");
             var element_ = new Array();
             var date_ = new Array();
+
+            //creer et ajouter les elements du titre des informations dan la DOM
             if (i==0) {
                 var titre = document.createElement("div");
                 titre.className = "titre";
@@ -37,6 +44,8 @@ fetch(url).then((response) =>
                 titre.appendChild(date);
                 main.appendChild(titre);
             }
+
+            //afficher les dernières mise a jour de chaque station par commune
             var infos = document.createElement("div");
             infos.className = "infos";
             var commune = document.createElement("p");
@@ -52,13 +61,14 @@ fetch(url).then((response) =>
             infos.appendChild(tps);
             infos.appendChild(date_info);
             main.appendChild(infos);
-            //console.log(detail);
+
+            //recuperer dans destableau les 10 dernières temperatures ainsi que l'heure à laquelle elles ont été enregisté  
             for (let j = 0; j < detail.length; j++) {
                 element_.push(detail[j]["resultat"]); 
                 date_.push(detail[j]["heure_mesure_temp"]);  
-                console.log(detail[j]["heure_mesure_temp"]); 
                                        
             }
+            //création des graphique pour chaque commune sur les dernières température enregistrées sur une journéé par rapport a l heure 
             var graph = document.querySelector('.graph');
             var canva = document.createElement("CANVAS");
             canva.className = "canva";
@@ -84,7 +94,6 @@ fetch(url).then((response) =>
                     responsive: false,
                 }
                 });
-            console.log(element_);
         })
     );
         }       
