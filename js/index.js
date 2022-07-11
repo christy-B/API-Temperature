@@ -72,7 +72,20 @@ fetch(url).then((response) =>
             var graph = document.querySelector('.graph');
             var canva = document.createElement("CANVAS");
             canva.className = "canva";
-            graph.appendChild(canva);
+            var legend = document.createElement("p");
+            legend.innerHTML = "Cours d'eau de" + " " + detail[0]["libelle_commune"];
+            legend.style.color = "white";
+            legend.style.textAlign = "center";
+            var date_tps = document.createElement("p");
+            date_tps.innerHTML = "Date:" + " " + detail[0]["date_mesure_temp"];
+            date_tps.style.fontSize = "12px";
+            date_tps.style.color = "white";
+            date_tps.style.textAlign = "center";
+            var graph1 = document.createElement("div");
+            graph1.appendChild(legend);
+            graph1.appendChild(date_tps);
+            graph1.appendChild(canva);
+            graph.appendChild(graph1);
             var ctx = canva;
             var myChart = new Chart(ctx, {
                 type: 'line',
@@ -94,6 +107,7 @@ fetch(url).then((response) =>
                     responsive: false,
                 }
                 });
+                console.log(detail);
         })
     );
         }       
